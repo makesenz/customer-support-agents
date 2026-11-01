@@ -5,6 +5,7 @@ from typing import Literal
 from autogen_agentchat.agents import AssistantAgent
 
 import config
+from agents import strict_tool
 from core.context import get_ticket
 from core.tracing import traced_tool
 
@@ -31,7 +32,7 @@ def build(model_client) -> AssistantAgent:
         name="resolution_agent",
         description="Writes a clear, polite reply that solves the problem using only the facts the Knowledge Agent found.",
         model_client=model_client,
-        tools=[submit_reply],
+        tools=[strict_tool(submit_reply)],
         reflect_on_tool_use=False,
         system_message=f"""You are the Resolution Agent for {config.BRAND_NAME}.
 Your ONLY job: write the reply to the customer and call `submit_reply` exactly once.
@@ -39,7 +40,10 @@ Your ONLY job: write the reply to the customer and call `submit_reply` exactly o
 Grounding rules (most important):
 - Use ONLY facts from the KB_RESULT message (passages and graph facts). Never invent prices, timelines,
   policies, phone numbers, UPI IDs or account numbers.
-- If KB_RESULT says NO_MATCH, or the passages do not answer the question, say honestly that you don't have
+- If the TRIAGE category is Off-topic (not about Maa Wellness at all, e.g. sports, news, weather), do not try to
+  answer it and do not promise a specialist callback. Politely say you can only help with Maa Wellness orders,
+  products, payments, delivery and account questions, invite them to ask one, and set confidence to High.
+- Otherwise, if KB_RESULT says NO_MATCH, or the passages do not answer the question, say honestly that you don't have
   that information, tell the customer a support specialist will contact them, give {config.SUPPORT_PHONE},
   and set confidence to Low.
 - If the complaint involves a side effect, a medical condition, a legal threat, fraud or a payment dispute,

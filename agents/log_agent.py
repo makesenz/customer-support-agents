@@ -3,6 +3,7 @@
 from autogen_agentchat.agents import AssistantAgent
 
 import config
+from agents import strict_tool
 from core import ticket_log
 from core.context import get_ticket
 from core.tracing import traced_tool
@@ -38,6 +39,7 @@ async def log_ticket(escalate_suggested: bool, escalation_note: str) -> str:
         previous_tickets_for_order=previous,
         llm_suggests=escalate_suggested,
         llm_reason=escalation_note,
+        category=triage.get("category", ""),
     )
     sources = ctx.used_sources or [r["source"] for r in ctx.retrieval]
     if ctx.graph_facts and "knowledge_graph" not in sources:
@@ -69,7 +71,7 @@ def build(model_client) -> AssistantAgent:
         name="log_agent",
         description="Records every ticket to the log file and decides whether to escalate it to human support.",
         model_client=model_client,
-        tools=[log_ticket],
+        tools=[strict_tool(log_ticket)],
         reflect_on_tool_use=False,
         system_message=f"""You are the Log Agent for {config.BRAND_NAME}.
 Your ONLY job: review the TRIAGE, KB_RESULT and REPLY messages, decide whether a human should take over,
@@ -81,6 +83,8 @@ and the guardrail flags in code, so you only add what code cannot see.
 - Do NOT escalate normal cases that the REPLY answered from the documents, for example: a late order still within
   the delivery window, returning SEALED/unopened products within 10 days, password reset, a damaged item reported
   with a replacement offered, pricing, COD or packaging questions.
+- Do NOT escalate Off-topic messages (sports, news, general knowledge) just because no document matched; the
+  polite redirect is the correct answer. Only escalate them if another rule (legal threat, abuse...) applies.
 
 {matrix}""",
     )

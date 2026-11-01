@@ -37,18 +37,22 @@ def is_high_value(complaint: str) -> bool:
 @traceable(name="escalation_rules")
 def decide(*, complaint: str, urgency: str, sentiment: str, kb_found: bool, confidence: str,
            input_flags: list[str], output_flags: list[str], output_blocked: bool,
-           previous_tickets_for_order: int, llm_suggests: bool, llm_reason: str = "") -> tuple[str, list[str]]:
+           previous_tickets_for_order: int, llm_suggests: bool, llm_reason: str = "",
+           category: str = "") -> tuple[str, list[str]]:
+    # An off-topic question (sports, weather...) has no document by design; a polite redirect is the
+    # right answer, so E3/E6 don't apply. Every other rule (legal, fraud, injection...) still does.
+    off_topic = category.lower() == "off-topic"
     reasons: list[str] = []
     if urgency.lower() == "high":
         reasons.append("E1 High urgency")
     if sentiment.lower() in ("very angry", "angry") and ("abusive" in input_flags or sentiment.lower() == "very angry"):
         reasons.append("E2 Very angry customer")
-    if not kb_found:
+    if not kb_found and not off_topic:
         reasons.append("E3 No matching document")
     for flag, reason in FLAG_RULES.items():
         if flag in input_flags:
             reasons.append(reason)
-    if confidence.lower() == "low":
+    if confidence.lower() == "low" and not off_topic:
         reasons.append("E6 Low confidence")
     if "refund" in complaint.lower() and re.search(r"\b(?<!un)(opened|used)\b|didn'?t work|not work|no result", complaint, re.I):
         reasons.append("E9 Refund for opened product / no results")
@@ -63,7 +67,8 @@ def decide(*, complaint: str, urgency: str, sentiment: str, kb_found: bool, conf
     # The Log Agent may add a rule the keyword checks missed, but only by citing its rule code.
     # E10 (high value) only adds priority to another rule, so it can't escalate alone.
     code = re.match(r"\s*(E\d{1,2})\b", llm_reason or "")
-    if llm_suggests and code and (code.group(1) != "E10" or reasons):
+    skip = {"E3", "E6"} if off_topic else set()
+    if llm_suggests and code and code.group(1) not in skip and (code.group(1) != "E10" or reasons):
         reasons.append(f"Log Agent: {llm_reason.strip()}")
     reasons = list(dict.fromkeys(reasons))
     return ("Escalated" if reasons else "Resolved"), reasons

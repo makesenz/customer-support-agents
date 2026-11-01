@@ -37,3 +37,13 @@ def test_traced_tool_hides_langsmith_config_param():
 
     assert list(FunctionTool(demo, description="x").schema["parameters"]["properties"]) == ["query"]
     assert demo("hi") == "HI"
+
+
+def test_agent_tools_use_strict_mode():
+    """Strict mode stops the model from skipping arguments (which made a reply get lost)."""
+    from agents import strict_tool
+
+    for fn, args in EXPECTED_ARGS.items():
+        schema = strict_tool(fn).schema
+        assert schema["strict"] is True
+        assert schema["parameters"]["required"] == args

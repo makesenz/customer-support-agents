@@ -5,11 +5,12 @@ from typing import Literal
 from autogen_agentchat.agents import AssistantAgent
 
 import config
+from agents import strict_tool
 from core.context import get_ticket
 from core.tracing import traced_tool
 
 Category = Literal["Shipping", "Refund", "Damaged / Wrong Item", "Billing / Payment", "Order Change",
-                   "Account", "Product Info", "Health / Safety", "Other"]
+                   "Account", "Product Info", "Health / Safety", "Other", "Off-topic"]
 Urgency = Literal["Low", "Medium", "High"]
 Sentiment = Literal["Positive", "Neutral", "Frustrated", "Angry", "Very Angry"]
 
@@ -35,7 +36,7 @@ def build(model_client) -> AssistantAgent:
         name="query_agent",
         description="Understands the customer's complaint: category, urgency, sentiment and a one-line summary.",
         model_client=model_client,
-        tools=[record_triage],
+        tools=[strict_tool(record_triage)],
         reflect_on_tool_use=False,
         system_message=f"""You are the Customer Query Agent for {config.BRAND_NAME}, an Ayurvedic wellness brand.
 Your ONLY job: read the customer's complaint and call `record_triage` exactly once. Do not answer the customer.

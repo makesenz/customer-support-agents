@@ -5,6 +5,7 @@ import asyncio
 from autogen_agentchat.agents import AssistantAgent
 
 import config
+from agents import strict_tool
 from core.context import get_ticket
 from core.tracing import traced_tool
 from rag.hybrid import get_retriever
@@ -43,7 +44,7 @@ def build(model_client) -> AssistantAgent:
         name="knowledge_agent",
         description="Searches company documents and the knowledge graph and returns only the relevant passages with source file names.",
         model_client=model_client,
-        tools=[search_kb],
+        tools=[strict_tool(search_kb)],
         reflect_on_tool_use=False,
         system_message=f"""You are the Knowledge Base Agent for {config.BRAND_NAME}.
 Your ONLY job: call `search_kb` exactly once using the "Search query" from the TRIAGE message

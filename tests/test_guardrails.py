@@ -75,6 +75,19 @@ def test_refund_of_unopened_product_is_not_e9():
     assert "E9 Refund for opened product / no results" in _decide(complaint="Refund please, I opened it and it didn't work")[1]
 
 
+def test_off_topic_question_is_not_escalated_for_missing_document():
+    assert _decide(category="Off-topic", kb_found=False, confidence="Low") == ("Resolved", [])
+    # The Log Agent can't re-add the no-document rule for an off-topic question...
+    assert _decide(category="Off-topic", kb_found=False, llm_suggests=True, llm_reason="E3 no document")[0] == "Resolved"
+    # ...but real risks still escalate even when a message is labelled off-topic.
+    assert _decide(category="Off-topic", kb_found=False, input_flags=["prompt_injection"])[0] == "Escalated"
+    assert _decide(category="Off-topic", input_flags=["legal_threat"])[0] == "Escalated"
+
+
+def test_in_scope_question_without_document_still_escalates():
+    assert _decide(category="Other", kb_found=False)[1] == ["E3 No matching document"]
+
+
 def test_log_agent_suggestion_needs_rule_code():
     assert _decide(llm_suggests=True, llm_reason="seems complex")[0] == "Resolved"
     assert _decide(llm_suggests=True, llm_reason="E9 customer opened the tin")[1] == ["Log Agent: E9 customer opened the tin"]

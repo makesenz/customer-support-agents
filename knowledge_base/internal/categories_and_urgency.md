@@ -18,7 +18,10 @@ version: 1.0
 | Account | Login, password, registration, data deletion | account_and_login.md |
 | Product Info | Ingredients, usage, which pack, prices | product_catalog.md, pricing_and_offers.md |
 | Health / Safety | Side effects, medical conditions, other medicines | usage_and_safety_faq.md |
-| Other | Anything else (bulk, distributor, fake sites, media) | company_overview.md |
+| Other | Any other question about Maa Wellness itself (bulk or corporate orders, gifting, distributors, fake sites, media) | company_overview.md |
+| Off-topic | Nothing to do with Maa Wellness, its products, orders, payments, accounts or health use: sports, news, weather, general knowledge, coding, other companies | none |
+
+**Off-topic vs Other:** if the message asks Maa Wellness to do or sell something (even something we don't offer, such as custom gift hampers), it is **Other**, not Off-topic. Off-topic messages are always **Low** urgency.
 
 ## Urgency
 | Level | When |
