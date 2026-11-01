@@ -1,0 +1,23 @@
+# Agents
+autogen-agentchat>=0.7,<0.8
+autogen-ext[openai]>=0.7,<0.8
+# UI
+streamlit>=1.40
+# Hybrid RAG
+faiss-cpu>=1.9
+fastembed>=0.5
+rank-bm25>=0.2.2
+neo4j>=5.25
+pyyaml>=6.0
+numpy>=1.26
+# Logging / data
+pandas>=2.2
+openpyxl>=3.1
+plotly>=5.24
+# Config & tracing
+python-dotenv>=1.0
+langsmith>=0.3
+# Language detection (bonus)
+langdetect>=1.0.9
+# Tests
+pytest>=8.0

@@ -1,0 +1,87 @@
+# Structured facts for the Neo4j knowledge graph.
+# Source of truth: Maa Wellness Product Knowledge Base v4.0 (PDF).
+# Aliases are lowercase phrases used to link a customer question to a node.
+
+brand:
+  id: maa_wellness
+  name: Maa Wellness
+  website: www.maawellness.in
+  phone: "+91 90425 12304"
+  centre: Hosur, Tamil Nadu
+
+products:
+  - id: mr_perfect
+    name: Mr. Perfect Men Wellness
+    form: Ayurvedic Rasayana powder (tin)
+    for: men
+    dosage: 2 level teaspoons in warm milk or warm water, twice daily after food (morning and night)
+    unit_duration: 12-13 days per tin
+    doc: product_catalog.md
+    aliases: [mr perfect, mr. perfect, men wellness, men's wellness, mens wellness, powder, tin]
+    ingredients: [Purified Shilajit, Ashwagandha, Safed Musli, Gokshura, Kaunch Beej, Moringa seeds, Flax seeds, Pumpkin seeds]
+    concerns: [stamina_energy, timing_performance, low_libido, semen_quality]
+    pairs_with: herbal_oil
+  - id: ms_perfect
+    name: Ms. Perfect Women Wellness
+    form: Ayurvedic powder (bottle)
+    for: women
+    dosage: 1 to 2 teaspoons daily with warm water or warm milk after dinner; non-hormonal and steroid-free
+    doc: product_catalog.md
+    aliases: [ms perfect, ms. perfect, women wellness, women's wellness, womens wellness]
+    ingredients: [Shatavari, Lodhra, Ashoka bark, Amla]
+    concerns: [pcod_pcos, irregular_periods, white_discharge, mood_swings]
+  - id: herbal_oil
+    name: Herbal Massage Oil
+    form: external-use herbal oil (bottle)
+    for: men
+    dosage: 4 to 5 drops massaged along the shaft for 2 to 3 minutes before sleep, avoiding the urethral tip; external use only
+    doc: product_catalog.md
+    aliases: [massage oil, herbal oil, oil]
+    ingredients: [warming herbs, nourishing oils]
+    concerns: [timing_performance]
+
+concerns:
+  - {id: stamina_energy, name: low stamina and energy, aliases: [stamina, energy, tired, fatigue, exhaustion, weakness]}
+  - {id: timing_performance, name: timing and performance, aliases: [premature, early discharge, timing, erection, performance, firmness]}
+  - {id: low_libido, name: low libido, aliases: [libido, desire, interest]}
+  - {id: semen_quality, name: low semen quality or count, aliases: [sperm, semen, count, fertility]}
+  - {id: pcod_pcos, name: PCOD / PCOS symptoms, aliases: [pcod, pcos, cyst]}
+  - {id: irregular_periods, name: irregular periods, aliases: [irregular period, periods, menstrual, cycle]}
+  - {id: white_discharge, name: white discharge, aliases: [white discharge, discharge]}
+  - {id: mood_swings, name: hormonal mood swings, aliases: [mood swing, mood, hormonal]}
+
+packages:
+  - {id: oil_single, product: herbal_oil, name: Herbal Massage Oil (standalone), contents: 1 bottle oil, mrp: 1500, price: 1000, aliases: [oil price, oil alone]}
+  - {id: mr_single, product: mr_perfect, name: Mr. Perfect Single Pack, contents: 1 tin powder, free_oils: 0, mrp: 3499, price: 2900, duration: 12-13 days, level: starter / trial pack, aliases: [single pack, 1 tin, one tin, trial, starter]}
+  - {id: mr_dual, product: mr_perfect, name: Mr. Perfect Dual Pack, contents: 2 tins powder, free_oils: 0, mrp: 6998, price: 5800, duration: 24-26 days, level: short-term vitality, aliases: [dual pack, 2 tins, two tins, pack of 2, 1 month]}
+  - {id: mr_power, product: mr_perfect, name: Power Combo (Best Seller), contents: 4 tins powder + 1 Herbal Massage Oil FREE, free_oils: 1, mrp: 14600, price: 9900, duration: 48-52 days (~1.5-2 months), level: core course, aliases: [power combo, 4+1, 4 tins, best seller, 2 month, 2 months]}
+  - {id: mr_ultra, product: mr_perfect, name: Ultra Strength Combo, contents: 8 tins powder + 2 Herbal Massage Oils FREE, free_oils: 2, mrp: 29200, price: 19000, duration: 96-104 days (~3-3.5 months), level: full restorative course, aliases: [ultra, ultra strength, 8+2, 8 tins, 3 month, 3 months, three month]}
+  - {id: mr_max, product: mr_perfect, name: Max Performance Combo, contents: 12 tins powder + 3 Herbal Massage Oils FREE, free_oils: 3, mrp: 38000, price: 27000, duration: 144-156 days (~5 months), level: long-term maintenance, aliases: [max performance, max combo, 12+3, 12 tins, 5 month, 5 months]}
+  - {id: ms_1, product: ms_perfect, name: Ms. Perfect 1 Bottle, contents: 1 bottle, mrp: 1450, price: 1450, aliases: [ms perfect 1 bottle, 1 bottle]}
+  - {id: ms_2, product: ms_perfect, name: Ms. Perfect 2 Bottles, contents: 2 bottles, mrp: 2900, price: 2700, aliases: [2 bottles]}
+  - {id: ms_4, product: ms_perfect, name: Ms. Perfect 4 Bottles, contents: 4 bottles, mrp: 5800, price: 5500, aliases: [4 bottles, pack of 4]}
+  - {id: ms_8, product: ms_perfect, name: Ms. Perfect 8 Bottles, contents: 8 bottles, mrp: 11600, price: 11000, aliases: [8 bottles]}
+  - {id: ms_12, product: ms_perfect, name: Ms. Perfect 12 Bottles, contents: 12 bottles, mrp: 17400, price: 16000, aliases: [12 bottles, pack of 12]}
+
+payment_methods:
+  - id: upi
+    name: UPI
+    details: "UPI ID maawellness@upi; GPay / PhonePe / Paytm number 9042512304"
+    rule: Prepaid orders get priority dispatch. Share the payment screenshot on WhatsApp for verification.
+    aliases: [upi, gpay, phonepe, paytm, google pay]
+  - id: bank
+    name: Direct bank transfer
+    details: "HDFC Bank, account name Maa Naturals, account number 00000000000000, IFSC HDFC0000000"
+    rule: Used for high-value orders and direct account payments.
+    aliases: [bank, neft, imps, account number, ifsc, bank transfer]
+  - id: cod
+    name: Cash on Delivery (COD)
+    details: Available across India
+    rule: "Mandatory ₹300 non-refundable advance by UPI (maawellness@upi) before dispatch. The ₹300 is extra on top of the product price; the full product price is paid in cash at delivery. 100% prepaid orders save this ₹300."
+    aliases: [cod, cash on delivery, 300, advance]
+
+policies:
+  - {id: returns, name: Returns and refunds, fact: "Return within 10 days of delivery; product must be unused, unopened, in original packaging, with proof of purchase. Refund in 3-7 business days to the original payment method. ₹300 COD advance is non-refundable.", doc: refund_policy.md, aliases: [return, refund, money back]}
+  - {id: shipping, name: Shipping, fact: "Orders before 3 PM IST on working days are processed the same day; 1-2 working days to dispatch; India delivery about 4 working days after dispatch; international 7-15 working days.", doc: shipping_policy.md, aliases: [delivery, shipping, dispatch, courier, track, late]}
+  - {id: discreet, name: Discreet packaging, fact: "On request, orders ship in 100% plain, unbranded packaging with no labels or brand markings.", doc: shipping_policy.md, aliases: [discreet, privacy, plain packaging, unbranded, family]}
+  - {id: damaged, name: Damaged or wrong item, fact: "Report within 48 hours of delivery with photos (unboxing video helps); free replacement or refund after verification.", doc: damaged_or_wrong_item.md, aliases: [damaged, broken, leaking, wrong item, missing, seal]}
