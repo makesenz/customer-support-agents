@@ -41,4 +41,4 @@ class VectorIndex:
     def search(self, query: str, k: int) -> list[tuple[int, float]]:
         q = _normalize(np.array(list(self.embedder.query_embed(query)), dtype="float32"))
         scores, ids = self.index.search(q, k)
-        return [(int(i), float(s)) for i, s in zip(ids[0], scores[0]) if i >= 0]
+        return [(int(i), float(s)) for i, s in zip(ids[0], scores[0], strict=True) if i >= 0]

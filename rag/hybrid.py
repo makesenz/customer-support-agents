@@ -69,7 +69,7 @@ class HybridRetriever:
     @traceable(name="rerank")
     def _rerank(self, query: str, candidates: list[int]) -> list[tuple[int, float]]:
         scores = self.reranker.score(query, [self.chunks[i].text for i in candidates])
-        return sorted(zip(candidates, scores), key=lambda x: x[1], reverse=True)
+        return sorted(zip(candidates, scores, strict=True), key=lambda x: x[1], reverse=True)
 
     @traceable(name="knowledge_graph", run_type="retriever")
     def _graph(self, query: str) -> list[str]:

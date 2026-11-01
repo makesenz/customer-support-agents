@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import asyncio
 import html
+import re
 
 import pandas as pd
 import plotly.express as px
@@ -129,7 +130,9 @@ with tab_new:
             st.markdown(f"{badge(row['status'])} &nbsp; **{row['ticket_id']}** · {meta['category']} · "
                         f"Urgency **{meta['urgency']}** · Sentiment **{meta['sentiment']}** · Confidence **{meta['confidence']}**",
                         unsafe_allow_html=True)
-            st.markdown(f'<div class="reply-box {"esc" if escalated else ""}">{html.escape(row["response"])}</div>',
+            # Escape first (the reply is LLM output), then allow only **bold**.
+            reply_html = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", html.escape(row["response"]))
+            st.markdown(f'<div class="reply-box {"esc" if escalated else ""}">{reply_html}</div>',
                         unsafe_allow_html=True)
             if escalated:
                 st.error(f"Escalated to human support: {row['escalation_reason']}")
@@ -199,6 +202,8 @@ with tab_dash:
                         use_container_width=True)
         c4.plotly_chart(px.histogram(df, x="sentiment", title="Sentiment"), use_container_width=True)
         reasons = df["escalation_reason"].str.split(r" \+ ").explode().str.strip()
+        # Group the Log Agent's free-text notes by the rule code they cite.
+        reasons = reasons.str.replace(r"^Log Agent: (E\d+).*", r"Log Agent: \1", regex=True)
         reasons = reasons[reasons != ""].value_counts().reset_index()
         if not reasons.empty:
             reasons.columns = ["reason", "tickets"]
